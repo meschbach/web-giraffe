@@ -1,0 +1,25 @@
+{
+  "name": "web-giraffe",
+  "version": "0.0.1",
+  "authors": [
+    "Mark Eschbach <meschbach@gmail.com>"
+  ],
+  "description": "WebWorker pooling",
+  "main": "browser/web-giraff.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "WebWorker",
+    "concurrent"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/meschbach/web-giraff",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
