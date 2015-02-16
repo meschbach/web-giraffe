@@ -5,9 +5,9 @@
 		<script src='/lib/web-giraffe.js'> </script> 
 		<script type='application/javascript'>
 var giraffe = web_giraffe({
-	/* Superver and worker are by default relative to the page  */
+	/* Default for these resources is relative to this page. */ 
 	supervisor: '/lib/web-giraffe-supervisor.js', 
-	worker: '/lib/web-giraffe-worker.js'
+	worker: 'factorial.js'
 });
 
 var out = "#output";

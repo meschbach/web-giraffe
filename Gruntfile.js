@@ -55,6 +55,10 @@ module.exports = function( grunt ){
 				src: workerSource,
 				dest: generatedOutput + "web-giraffe-worker.js"
 			},
+			"test-worker" : {
+				src: "browser/test-worker.js",
+				dest: "target/browser/test-worker.js"
+			},
 			"example-client" : {
 				src: clientSource,
 				dest: "examples/lib/web-giraffe.js"
@@ -92,6 +96,6 @@ module.exports = function( grunt ){
 	grunt.loadNpmTasks("grunt-contrib-watch");
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker" ]);
-	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker"] );
+	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }

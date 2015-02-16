@@ -7,19 +7,23 @@ function promise_protocol_repliesTo( name, handler ){
 			return;
 		}
 
-		if( env ){
-			if( message.transfered ){ throw new Error("Transfer list conflict"); }
-			message.transfered = env.ports;
-		}
+		try {
+			if( env ){
+				if( message.transfered ){ throw new Error("Transfer list conflict"); }
+				message.transfered = env.ports;
+			}
 
-		var handlerPromise = Promise.resolve( handler( message ) );
-		handlerPromise.then( function( result ){
-			var transfer = result.transfer ? result.transfer : [];
-			delete result.transfer;
-			self.send({ command: message.replyTo, success: true, result: result }, transfer );
-		}, function( error ){
-			self.send({ command: message.replyTo, success: false, error: error.toString()});
-		});
+			var handlerPromise = Promise.resolve( handler( message ) );
+			handlerPromise.then( function( result ){
+				var transfer = result.transfer ? result.transfer : [];
+				delete result.transfer;
+				self.send({ command: message.replyTo, success: true, result: result }, transfer );
+			}, function( error ){
+				self.send({ command: message.replyTo, success: false, error: error.toString()});
+			});
+		}catch( problem ){
+			self.send({ command: message.replyTo, success: false, error: problem.toString()});
+		}
 	}
 
 	this.register( name, promise_interceptor );
