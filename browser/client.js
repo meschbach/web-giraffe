@@ -1,5 +1,5 @@
 function Giraffe( config ){
-	this.cfg = config;
+	this.cfg = config || {};
 
 	this.pendingPromises = [];
 	this.dispatcher = new CommandDispatcher();
@@ -16,7 +16,8 @@ function Giraffe( config ){
 		return new Promise( function( fulfill, reject ){
 			var channel = new MessageChannel();
 
-			var worker = new Worker( "/web-giraffe-worker.js" );
+			var workerScript = (config || {}).worker || "web-giraffe-worker.js";
+			var worker = new Worker( workerScript );
 			worker.addEventListener( "error", function( problem ){
 				console.error( "Problem setting up work agent", problem );
 			});
@@ -31,7 +32,7 @@ function Giraffe( config ){
 Giraffe.prototype.start = function(){
 	if( this.supervisor ) { return; }
 
-	var supervisorScript = "/web-giraffe-supervisor.js";
+	var supervisorScript = this.cfg.supervisor || "web-giraffe-supervisor.js";
 	this.supervisor = new Worker( supervisorScript );
 	this.dispatcher.linkPort( this.supervisor, true );
 
@@ -39,12 +40,13 @@ Giraffe.prototype.start = function(){
 	 * Send configuration
 	 */
 	var cfg = {};
-	if( this.cfg ){
-		cfg.map = this.cfg;
+	if( this.cfg && this.cfg.map ){
+		cfg.map = this.cfg.map;
 	}
 	this.supervisor.postMessage({ command: supervisorProtocol.initialize, worker: cfg });
 
 	this.supervisor.addEventListener('error', function(problem){
+		console.warn( "[supervisor] Encountered error: ", problem );
 		var message = problem.message ? problem.message : "(unkonwn supervisor error)"; 
 		var err = new Error( message );
 		this.pendingPromises.forEach( function( promiseHandler ){

@@ -1,33 +1,21 @@
 /**
  * Worker agent
  */
-function giraffe_work_agent( control_channel ){
+function giraffe_worker_agent( worker, control_channel ){
+	/*
+	 * ensure our extension points exist
+	 */
+	worker = worker || self;
+	worker.init = worker.init || nope;
+	worker.perform_work_on = worker.perform_work_on || nope;
+	control_channel = control_channel || self;
+
 	var dispatcher = new CommandDispatcher();
 	dispatcher.defaultHandler = function( command ){
 		console.error( "[work-agent] unhandled command ", command );
 	}
 
 	function work_agent( id, supervisor_channel ) {
-
-		//Work splint; splice dispatch to actual work here; must be a promise
-		function sum_before( input ){
-			if( input == 0 ){  return 0; }
-			return sum_before( input - 1 ) + input;
-		}
-		var algorithms = { //TODO: perform_work_on should be an integration seem
-			identity: function( input ){ return  input; },
-			sum_before: sum_before
-		};
-		var workConfig;
-		function perform_work_on( data ){
-			return new Promise( function( fulfill, fail ){
-				var mapAlgorithmName = workConfig.map || "identity";
-				var mapAlgorithm = algorithms[ mapAlgorithmName ];
-				var result = data.map( mapAlgorithm );
-				fulfill( result );
-			});
-		}
-		
 		var agent_control = new CommandDispatcher();
 		agent_control.defaultHandler = function( cmd ){
 			console.warn( "[worker:",id,"] Unknown comamnd: ", cmd );
@@ -35,13 +23,12 @@ function giraffe_work_agent( control_channel ){
 		agent_control.usesPromises( new Base36Namer() );
 		//Work Protocol Service
 		agent_control.repliesTo( workProtocol.initialize, function( command ){
-			return new Promise( function( fulfill ){
-				workConfig = command.config;
-				fulfill({id: id});
+			return Promise.resolve( worker.init( command.config ) ).then( function(){
+				return {id: id};
 			});
 		});
 		agent_control.repliesTo( workProtocol.operation, function( command ){
-			return perform_work_on( command.on );
+			return Promise.resolve( worker.perform_work_on( command.on ) );
 		});
 		agent_control.linkPort( supervisor_channel );
 	}
@@ -57,5 +44,3 @@ function giraffe_work_agent( control_channel ){
 		dispatcher.dispatch( message, event );
 	});
 }
-
-giraffe_work_agent( self );

@@ -2,3 +2,4 @@ node_modules
 target
 *.swp
 *.swo
+examples/lib
