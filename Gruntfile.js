@@ -1,4 +1,5 @@
 module.exports = function( grunt ){
+	var generatedOutput = process.env["DIST"] || "target/browser/";
 	var config = {
 		pkg: grunt.file.readJSON( "package.json" ),
 		concat: {
@@ -11,7 +12,7 @@ module.exports = function( grunt ){
 					'browser/worker-factory-protocol.js',
 					'browser/client.js'
 				],
-				dest: "target/browser/web-giraffe.js"
+				dest: generatedOutput + "web-giraffe.js"
 			},
 			"browser-supervisor" : {
 				src: [
@@ -23,7 +24,7 @@ module.exports = function( grunt ){
 					'browser/worker-factory-protocol.js',
 					'browser/supervisor.js'
 				],
-				dest: "target/browser/web-giraffe-supervisor.js",
+				dest: generatedOutput + "web-giraffe-supervisor.js",
 				options: {
 					footer: ";giraffe_supervisor();"
 				}
@@ -36,7 +37,7 @@ module.exports = function( grunt ){
 					'browser/work-protocol.js',
 					'browser/worker.js'
 				],
-				dest: "target/browser/web-giraffe-worker.js"
+				dest: generatedOutput + "web-giraffe-worker.js"
 			}
 		},
 		karma: {
