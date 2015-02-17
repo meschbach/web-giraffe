@@ -14,8 +14,9 @@ function giraffe_worker_agent( worker, control_channel ){
 	dispatcher.defaultHandler = function( command ){
 		console.error( "[work-agent] unhandled command ", command );
 	}
+	dispatcher.usesPromises( new Base36Namer() );
 
-	function work_agent( id, supervisor_channel ) {
+	function work_agent( id, supervisor_channel, hasStarted ) {
 		var agent_control = new CommandDispatcher();
 		agent_control.defaultHandler = function( cmd ){
 			console.warn( "[worker:",id,"] Unknown comamnd: ", cmd );
@@ -30,13 +31,17 @@ function giraffe_worker_agent( worker, control_channel ){
 		agent_control.repliesTo( workProtocol.operation, function( command ){
 			return Promise.resolve( worker.perform_work_on( command.on ) );
 		});
-		agent_control.linkPort( supervisor_channel );
+		agent_control.linkPort( supervisor_channel, hasStarted );
 	}
 
 	dispatcher.register( "giraffe:browser-worker-init", function( message, env ){
 		id = message.id;
 		port = env.ports[0]; 
-		work_agent( id, port );
+		work_agent( id, port, false );
+	});
+
+	dispatcher.register( "giraffe:web-worker-init", function( message ){
+		work_agent( message.id, self, true );
 	});
 
 	control_channel.addEventListener( 'message', function( event ){

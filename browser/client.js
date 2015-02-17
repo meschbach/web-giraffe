@@ -1,5 +1,6 @@
 function Giraffe( config ){
 	this.cfg = config || {};
+	this.cfg.worker = this.cfg.worker || "web-giraffe-worker.js";
 
 	this.pendingPromises = [];
 	this.dispatcher = new CommandDispatcher();
@@ -16,14 +17,14 @@ function Giraffe( config ){
 		return new Promise( function( fulfill, reject ){
 			var channel = new MessageChannel();
 
-			var workerScript = (config || {}).worker || "web-giraffe-worker.js";
+			var workerScript = this.cfg.worker;
 			var worker = new Worker( workerScript );
 			worker.addEventListener( "error", function( problem ){
 				console.error( "Problem setting up work agent", problem );
 			});
 			worker.postMessage({ command: "giraffe:browser-worker-init", id: command.id }, [channel.port2] );
 			fulfill({ transfer: [channel.port1] });
-		});
+		}.bind(this));
 	}.bind( this ) );
 
 	this.namer = new Base36Namer();
@@ -39,11 +40,11 @@ Giraffe.prototype.start = function(){
 	/*
 	 * Send configuration
 	 */
-	var cfg = {};
-	if( this.cfg && this.cfg.map ){
-		cfg.map = this.cfg.map;
-	}
-	this.supervisor.postMessage({ command: supervisorProtocol.initialize, worker: cfg });
+	var supervisorConfiguration = {
+		worker: this.cfg.worker,
+		map: this.cfg.map
+	};
+	this.supervisor.postMessage({ command: supervisorProtocol.initialize, config: supervisorConfiguration });
 
 	this.supervisor.addEventListener('error', function(problem){
 		console.warn( "[supervisor] Encountered error: ", problem );

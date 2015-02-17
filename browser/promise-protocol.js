@@ -19,9 +19,17 @@ function promise_protocol_repliesTo( name, handler ){
 				delete result.transfer;
 				self.send({ command: message.replyTo, success: true, result: result }, transfer );
 			}, function( error ){
+			/* TODO: Debuggin
+				if( error.stack ){
+					console.error("Promise to ", message.replyTo," failed: ", error.message , error.stack);
+				}
+				*/
 				self.send({ command: message.replyTo, success: false, error: error.toString()});
 			});
 		}catch( problem ){
+			/* TODO: Debuggin
+			console.error("Failed to dispatch for message", problem, problem.stack);
+			*/
 			self.send({ command: message.replyTo, success: false, error: problem.toString()});
 		}
 	}
@@ -65,7 +73,7 @@ CommandDispatcher.prototype.usesPromises = function( namer ) {//TODO: better met
 
 // TODO: Extract into own file
 function port_linkage_send( message, transferables ) {
-	//console.log( "Sending: ", message );
+//	console.log( "Sending: ", message );
 	this.port.postMessage( message, transferables );
 }
 
