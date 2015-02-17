@@ -11,6 +11,7 @@
     "karma-chrome-launcher": "0.1.7",
     "karma-firefox-launcher": "0.1.4",
     "karma-safari-launcher": "0.1.1",
+		"karma-notify-reporter" : "0.1.1",
 		"sinon-chai" : "2.6.0",
 		"karma-sinon-chai" : "0.3.0",
 
