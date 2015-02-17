@@ -8,10 +8,10 @@ function WorkAgentClient( id, cfg ){
 	this.dispatcher.usesPromises( new Base36Namer() );
 	this.idle = nope;
 }
-WorkAgentClient.prototype.openedChannel = function( channel  ){
+WorkAgentClient.prototype.openedChannel = function( channel, hasStarted  ){
 	if( !channel ){ throw new Error("channel"); }
 	this.channel = channel;
-	this.dispatcher.linkPort( channel );
+	this.dispatcher.linkPort( channel, hasStarted );
 
 	return this.dispatcher.withReplyTo( {command: workProtocol.initialize, id: this.id, config: this.cfg } )
 	.then( function(){
@@ -41,9 +41,9 @@ function giraffe_supervisor(){
 		}
 	}
 
-	var workerParameters;
+	var supervisorConfig;
 	commandDispatcher.register( supervisorProtocol.initialize, function( message ){
-		workerParameters = message.worker;
+		supervisorConfig = message.config;
 	});
 
 	var batches = [];
@@ -59,7 +59,7 @@ function giraffe_supervisor(){
 	var workerNamer = new Base36Namer();
 	function spawn_worker(){
 		var id = "worker-" + workerNamer.next();
-		var agent = new WorkAgentClient( id, workerParameters );
+		var agent = new WorkAgentClient( id, supervisorConfig );
 		agent.idle = function(){
 			if( batches.length > 0 ){
 				var batch = batches.shift();
@@ -70,8 +70,7 @@ function giraffe_supervisor(){
 		}
 		workers[id] = agent;
 		if( self.Worker ){
-			throw new Error("Need to implement that");
-	//		spawn_internal_worker( id ); //Apparently supported under FF && IE
+			spawn_internal_worker( id, agent ); //Apparently supported under FF && IE
 		}else{
 			spawn_worker_from_page( id, agent ); //Chrome and Safari
 		}
@@ -82,6 +81,12 @@ function giraffe_supervisor(){
 			var channel = command.transfered[0];
 			agent.openedChannel( channel );
 		});
+	}
+
+	function spawn_internal_worker( id, agent ){
+		var worker = new Worker( supervisorConfig.worker );
+		worker.postMessage({ command: 'giraffe:web-worker-init', id: id });
+		agent.openedChannel( worker, true );
 	}
 
 	commandDispatcher.linkPort( self, true );
