@@ -5,11 +5,21 @@
 function spliced_sharding_strategy( maximumSize, queue ){
 	var result = {};
 	result.shard = function( data ){
+		var promises = [];
+
+		function submit_shard( data ){
+			var future = new Future();
+			promises.push( future.promise() );
+			queue.push({ completion: future, data: data });
+		}
+
 		while( data.length > maximumSize ){
 			var shard = data.splice( 0, maximumSize );
-			queue.push( shard );
+			submit_shard( shard );
 		}
-		queue.push( data );
+		submit_shard( data );
+
+		return promises;
 	}
 	return result;
 }
