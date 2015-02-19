@@ -15,6 +15,7 @@ function promise_protocol_repliesTo( name, handler ){
 
 			var handlerPromise = Promise.resolve( handler( message ) );
 			handlerPromise.then( function( result ){
+				//TODO: Test if result is undefined (transfer == [] if so) 
 				var transfer = result.transfer ? result.transfer : [];
 				delete result.transfer;
 				self.send({ command: message.replyTo, success: true, result: result }, transfer );
@@ -73,7 +74,7 @@ CommandDispatcher.prototype.usesPromises = function( namer ) {//TODO: better met
 
 // TODO: Extract into own file
 function port_linkage_send( message, transferables ) {
-//	console.log( "Sending: ", message );
+	console.log( "Sending: ", message );
 	this.port.postMessage( message, transferables );
 }
 

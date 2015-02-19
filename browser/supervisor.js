@@ -26,6 +26,11 @@ WorkAgentClient.prototype.dial = function(){
 WorkAgentClient.prototype.assign_work = function( data ){
 	return this.dispatcher.withReplyTo({ command: workProtocol.operation, on: data });
 }
+WorkAgentClient.prototype.assign = function( request ){
+	return this.assign_work( request.data ).then( function( resultMessage ){
+		request.completion.resolve( resultMessage );
+	});
+}
 
 /**
  * Giraffe Supervisor 
@@ -44,16 +49,29 @@ function giraffe_supervisor(){
 	var supervisorConfig;
 	commandDispatcher.register( supervisorProtocol.initialize, function( message ){
 		supervisorConfig = message.config;
+		workDelegate = fifo_work_pool( workerFactory, (supervisorConfig.workers || {}).maxmium || 6 )
+		workSharding = spliced_sharding_strategy( (supervisorConfig.sharding || {}).maximumSize || 100, workDelegate );
 	});
 
-	var batches = [];
+	var workDelegate, workSharding, workerFactory;
 	commandDispatcher.repliesTo( 'feed', function( message ){
-		return new Promise( function( fulfill, fail ){
-			var batchData = message.batch;
-			batches.push({ data: batchData, done: fulfill });
-			spawn_worker();
+		var batchData = message.batch;
+		var shardPromises = workSharding.shard( batchData );
+		return Promise.all( shardPromises ).then( function( output ){
+			var result = [];
+			output.forEach( function( r ){
+				result = result.concat(r);
+			});
+			return result;
 		});
 	});
+
+	//TODO: Worker spawning should really be moved out 
+	workerFactory = {
+		newWorker: function(){
+			spawn_worker();
+		}
+	}
 
 	var workers = {}; //TODO: Still needed?
 	var workerNamer = new Base36Namer();
@@ -61,12 +79,7 @@ function giraffe_supervisor(){
 		var id = "worker-" + workerNamer.next();
 		var agent = new WorkAgentClient( id, supervisorConfig );
 		agent.idle = function(){
-			if( batches.length > 0 ){
-				var batch = batches.shift();
-				agent.assign_work( batch.data ).then( function( result ){
-					batch.done( result );
-				});
-			}
+			workDelegate.idling( agent );
 		}
 		workers[id] = agent;
 		if( self.Worker ){

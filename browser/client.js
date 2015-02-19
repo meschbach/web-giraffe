@@ -1,6 +1,8 @@
 function Giraffe( config ){
 	this.cfg = config || {};
-	this.cfg.worker = this.cfg.worker || "web-giraffe-worker.js";
+	this.cfg.worker = this.cfg.worker || {};
+	this.cfg.worker.script = this.cfg.worker.script || "web-giraffe-worker.js";
+	this.cfg.worker.maximum = navigator.hardwareConcurrency || 6;
 
 	this.pendingPromises = [];
 	this.dispatcher = new CommandDispatcher();

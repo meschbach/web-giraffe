@@ -3,3 +3,4 @@ target
 *.swp
 *.swo
 examples/lib
+bower_components

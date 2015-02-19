@@ -23,6 +23,9 @@ module.exports = function( grunt ){
 	 * Supervisor specific sources 
 	 */
 	var supervisorSource = coreSource.concat([
+		'browser/aging-lifo-queue.js',
+		'browser/fifo-work-pool.js',
+		'browser/spliced-sharding-strategy.js',
 		'browser/supervisor-protocol.js',
 		'browser/work-protocol.js',
 		'browser/worker-factory-protocol.js',
@@ -73,6 +76,10 @@ module.exports = function( grunt ){
 			"example-worker" : {
 				src: workerSource,
 				dest: "examples/lib/web-giraffe-worker.js"
+			},
+			"example-libs" : {
+				src: "bower_components/jquery/dist/jquery.js",
+				dest: "examples/lib/jquery.js"
 			}
 		},
 		karma: {
@@ -85,7 +92,7 @@ module.exports = function( grunt ){
 		watch: {
 			browser: {
 				files: ['browser/**/*.js'],
-				tasks: ["build-browser-artifacts"]
+				tasks: ["build-browser-artifacts", "build-examples"]
 			}
 		}
 	};
@@ -95,7 +102,7 @@ module.exports = function( grunt ){
 	//grunt.loadNpmTasks("grunt-karma");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 
-	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker" ]);
+	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
 	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }
