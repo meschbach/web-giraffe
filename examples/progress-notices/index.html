@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<title>Getting Started - Web Giraffe</title>
+		<script src='/lib/jquery.js'> </script>
+		<script src='/lib/web-giraffe.js'> </script> 
+		<script type='application/javascript'>
+var giraffe = web_giraffe({
+	/* Default for these resources is relative to this page. */ 
+	supervisor: '/lib/web-giraffe-supervisor.js', 
+	worker: 'long-running.js'
+});
+
+var out = "#output";
+
+function output( message ){
+	$(out).append( message + "\n" );
+}
+
+function feed_data(){
+	output( "Feeding" );
+	var inputs = [];
+	for( var i = 0;  i < 400; i++ ){
+		inputs.push( i );
+	}
+	var promised = giraffe.feed( inputs );
+	promised.onProgress = function( progress ){
+		output( "Progress: " + JSON.stringify( progress )  );
+	}
+	promised.then( function( result ){
+		output( "Done: ", JSON.stringify( result ) );
+	}, function( problem ){
+		output( problem );
+	});
+}
+
+$(function(){
+	$("#start").click( feed_data );
+	$("#clear").click( function(){
+		$(out).text( "Cleared." );
+	});
+});
+		</script> 
+	</head>
+	<body>
+		<h1>Getting started</h1>
+		<p>
+			Please see <a href='https://github.com/meschbach/web-giraffe/wiki'>the wiki</a> for more details.
+		</p>
+		<div>
+			<button id='start'>Run</button>
+			<button id='clear'>Clear</button>
+		</div>
+		<div>
+			<h3>Output</h3>
+			<pre id='output'></pre>
+		</div>
+	</body>
+</html>

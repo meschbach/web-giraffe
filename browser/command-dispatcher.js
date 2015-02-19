@@ -34,6 +34,7 @@ CommandDispatcher.prototype.once = function( name, handler ){
 }
 
 //TODO: This method needs better test coverage
+//TODO: This needs to be moved to the Promise Protocol
 CommandDispatcher.prototype.promiseMessage = function( name ){
 	if( !name ){ throw new Error( "command name must be defined" ); }
 

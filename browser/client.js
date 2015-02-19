@@ -61,7 +61,7 @@ Giraffe.prototype.start = function(){
 
 Giraffe.prototype.feed = function( batch ){
 	this.start();
-	return this.dispatcher.withReplyTo({ command: 'feed', batch: batch });
+	return this.dispatcher.withProgressAndReplyTo({ command: 'feed', batch: batch });
 }
 
 function web_giraffe( config ){ return new Giraffe( config ); }

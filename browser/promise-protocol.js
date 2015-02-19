@@ -12,8 +12,17 @@ function promise_protocol_repliesTo( name, handler ){
 				if( message.transfered ){ throw new Error("Transfer list conflict"); }
 				message.transfered = env.ports;
 			}
+			var progressNotices;
+			var progressName = message.progressName;
+			if( progressName ){
+				progressNotices = function( message ){
+					self.send({command: progressName, details: message });
+				}.bind( this );
+			}else{
+				progressNotices = nope;
+			}
 
-			var handlerPromise = Promise.resolve( handler( message ) );
+			var handlerPromise = Promise.resolve( handler( message, progressNotices ) );
 			handlerPromise.then( function( result ){
 				//TODO: Test if result is undefined (transfer == [] if so) 
 				var transfer = result.transfer ? result.transfer : [];
@@ -36,6 +45,21 @@ function promise_protocol_repliesTo( name, handler ){
 	}
 
 	this.register( name, promise_interceptor );
+}
+
+function promies_protocol_withProgressAndReplyTo( message ){
+	var name = this.namer.next();
+	message.progressName = name;
+
+	var self = this;
+	this.register( name , function( message ){
+		var details = message.details;
+		result.onProgress( details );
+	});
+	var result = this.withReplyTo( message );
+	result.then( function(){ self.unregister( name ); }, function(){ self.unregister(); });
+	result.onProgress = nope;
+	return result;
 }
 
 function promise_protocol_withReplyTo( message ){
@@ -68,13 +92,14 @@ CommandDispatcher.prototype.usesPromises = function( namer ) {//TODO: better met
 
 	//Client stuff
 	this.withReplyTo = promise_protocol_withReplyTo;
+	this.withProgressAndReplyTo = promies_protocol_withProgressAndReplyTo;
 	//Serivce stuff
 	this.repliesTo = promise_protocol_repliesTo;
 }
 
 // TODO: Extract into own file
 function port_linkage_send( message, transferables ) {
-	console.log( "Sending: ", message );
+	//console.log( "Sending: ", message );
 	this.port.postMessage( message, transferables );
 }
 
