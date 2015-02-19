@@ -21,6 +21,7 @@ function fifo_work_pool( workerFactory, workerLimit ){
 			//TODO: The other branch is tested via the #push method; do we need dup testing for worker#assign?
 			idlingWorkers.enqueue( worker, function(){
 				future.resolve({ command: 'terminating' });
+				workerCount--;
 				worker.terminate();
 			});
 		}
