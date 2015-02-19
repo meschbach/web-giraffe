@@ -64,18 +64,4 @@ Giraffe.prototype.feed = function( batch ){
 	return this.dispatcher.withReplyTo({ command: 'feed', batch: batch });
 }
 
-//Really apart of a wrapper for IPC communication using command channels; should be pulled out
-Giraffe.prototype.promiseReply = function( command ){
-	var name = this.namer.next();
-	var receiver = this.dispatcher.promiseMessage( name ).then( function( message ){
-		if( message.error ){
-			throw new Error( message.error );
-		}
-		return message.result;
-	});
-	command.replyTo = name;
-	this.supervisor.postMessage( command );
-	return receiver;
-}
-
 function web_giraffe( config ){ return new Giraffe( config ); }
