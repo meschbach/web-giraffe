@@ -46,30 +46,3 @@ function fifo_work_pool( workerFactory, workerLimit ){
 	return object;
 }
 
-/**
- * Deals with a possible delayed promise or immediate resolution if a value is known,
- * using the #resolve method to provide a value.
- *
- * TODO: Needs solid testing
- * TODO: Needs a better name
- */
-function Future(){
-	this.resolve = function( value ){
-		this.value = value;
-	}
-
-	this.promise = function(){
-		var value = this.value;
-		if( value ){
-			return Promise.resolve( value );
-		}
-
-		var resolver = new Promise( function( fulfill, fail ){
-			var value = this.value;
-			if( value ){ fulfill( value ); }
-			this.resolve = fulfill;
-		}.bind(this) );
-		return resolver;
-	}
-}
-
