@@ -54,9 +54,14 @@ function giraffe_supervisor(){
 	});
 
 	var workDelegate, workSharding, workerFactory;
-	commandDispatcher.repliesTo( 'feed', function( message ){
+	commandDispatcher.repliesTo( 'feed', function( message, progress ){
 		var batchData = message.batch;
 		var shardPromises = workSharding.shard( batchData );
+		shardPromises.forEach( function( promise ) {
+			promise.then( function( result ){
+				progress(result); 
+			});
+		});
 		return Promise.all( shardPromises ).then( function( output ){
 			var result = [];
 			output.forEach( function( r ){

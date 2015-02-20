@@ -25,6 +25,7 @@ module.exports = function( grunt ){
 	var supervisorSource = coreSource.concat([
 		'browser/aging-lifo-queue.js',
 		'browser/fifo-work-pool.js',
+		'browser/future.js',
 		'browser/spliced-sharding-strategy.js',
 		'browser/supervisor-protocol.js',
 		'browser/work-protocol.js',
