@@ -90,6 +90,12 @@ module.exports = function( grunt ){
 				background: false 
 			}
 		},
+		uglify: {
+			browser: {
+				options: { compress: true, mangle: true },
+				files: { }
+			}
+		},
 		watch: {
 			browser: {
 				files: ['browser/**/*.js'],
@@ -97,13 +103,16 @@ module.exports = function( grunt ){
 			}
 		}
 	};
+	config.uglify.browser.files[generatedOutput + "/web-giraffe.min.js" ] =  generatedOutput+ "/web-giraffe.js"; 
+	config.uglify.browser.files[generatedOutput + "/web-giraffe-supervisor.min.js" ] =  generatedOutput+ "/web-giraffe-supervisor.js"; 
+	config.uglify.browser.files[generatedOutput + "/web-giraffe-worker.min.js" ] =  generatedOutput+ "/web-giraffe-worker.js"; 
 	grunt.initConfig( config );
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
-	//grunt.loadNpmTasks("grunt-karma");
+	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
-	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker"] );
+	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker", "uglify"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }
