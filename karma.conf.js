@@ -2,7 +2,7 @@
 // Generated on Wed Feb 11 2015 22:04:26 GMT-0800 (PST)
 
 module.exports = function(config) {
-  config.set({
+  var cfg = {
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -58,11 +58,17 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Safari'],
+    browsers: ['Chrome'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-  });
+  };
+
+  if (process.platform == 'darwin') {
+    cfg.browsers.push('Safari');
+  }
+
+  config.set( cfg );
 };
