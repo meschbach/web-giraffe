@@ -90,6 +90,16 @@ module.exports = function( grunt ){
 				background: false 
 			}
 		},
+		mochaTest: {
+			test: {
+				options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: true
+        },
+        src: ['tests/node-system/**/*.js']
+			}
+		},
 		uglify: {
 			browser: {
 				options: { compress: true, mangle: true },
@@ -100,6 +110,10 @@ module.exports = function( grunt ){
 			browser: {
 				files: ['browser/**/*.js'],
 				tasks: ["build-browser-artifacts", "build-examples"]
+			},
+			node:{
+				files: ['env/node/**/*.js', 'tests/node-system/**/*.js'],
+				tasks: ["mochaTest"]
 			}
 		}
 	};
@@ -111,6 +125,7 @@ module.exports = function( grunt ){
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-mocha-test");
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
 	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker", "uglify"] );
