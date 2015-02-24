@@ -4,7 +4,7 @@ staticFileProxy.use( express.static( __dirname + "/target/browser" ) );
 staticFileProxy.listen( 9878 );
 
 module.exports = function(config) {
-  config.set({
+  var cfg = {
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -37,7 +37,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'osx'],
+    reporters: ['progress', 'notify'],
 
 
     // web server port
@@ -62,11 +62,17 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'Safari'],
+    browsers: ['Chrome', 'Firefox'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-  });
+  };
+
+  if (process.platform == 'darwin') {
+    cfg.browsers.push('Safari');
+  }
+
+  config.set( cfg );
 };
