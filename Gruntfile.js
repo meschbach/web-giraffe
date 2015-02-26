@@ -1,5 +1,6 @@
 module.exports = function( grunt ){
-	var generatedOutput = process.env["DIST"] || "target/browser/";
+	var generatedOutput = process.env["DIST"] || "target/";
+	var generatedBrowserOutput = generatedOutput + "browser/";
 
 	/*
 	 * Source files used by all workers within the system
@@ -46,18 +47,18 @@ module.exports = function( grunt ){
 		concat: {
 			"browser-client" : {
 				src: clientSource,
-				dest: generatedOutput + "web-giraffe.js"
+				dest: generatedBrowserOutput + "web-giraffe.js"
 			},
 			"browser-supervisor" : {
 				src: supervisorSource,
-				dest: generatedOutput + "web-giraffe-supervisor.js",
+				dest: generatedBrowserOutput + "web-giraffe-supervisor.js",
 				options: {
 					footer: ";giraffe_supervisor();"
 				}
 			},
 			"browser-worker" : {
 				src: workerSource,
-				dest: generatedOutput + "web-giraffe-worker.js"
+				dest: generatedBrowserOutput + "web-giraffe-worker.js"
 			},
 			"test-worker" : {
 				src: "browser/test-worker.js",
@@ -81,6 +82,12 @@ module.exports = function( grunt ){
 			"example-libs" : {
 				src: "bower_components/jquery/dist/jquery.js",
 				dest: "examples/lib/jquery.js"
+			},
+			"isomorphic" : {
+				options: {
+				},
+				src: [ "env/isomorphic/**/*.js" ],
+				dest: generatedOutput + "node/isomorphic.js" 
 			}
 		},
 		karma: {
@@ -98,6 +105,14 @@ module.exports = function( grunt ){
           clearRequireCache: true
         },
         src: ['tests/node-system/**/*.js']
+			},
+			isomorphicTest: {
+				options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: true
+        },
+        src: ['tests/isomorphic-unit/**/*.js']
 			}
 		},
 		uglify: {
@@ -117,9 +132,17 @@ module.exports = function( grunt ){
 			}
 		}
 	};
-	config.uglify.browser.files[generatedOutput + "/web-giraffe.min.js" ] =  generatedOutput+ "/web-giraffe.js"; 
-	config.uglify.browser.files[generatedOutput + "/web-giraffe-supervisor.min.js" ] =  generatedOutput+ "/web-giraffe-supervisor.js"; 
-	config.uglify.browser.files[generatedOutput + "/web-giraffe-worker.min.js" ] =  generatedOutput+ "/web-giraffe-worker.js"; 
+
+	//Isometric artifacts
+	config.concat.isomorphic.options.banner = 'var Promise = require("es6-promise").Promise;\n\n';
+	config.concat.isomorphic.options.footer = ['CommandDispatcher', 'Future'].map(function ( name ) {
+		return 'module.exports.' + name + ' = ' + name;
+	}).join(';\n');
+
+	// Uglified browser release artifacts
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe.min.js" ] =  generatedBrowserOutput+ "/web-giraffe.js"; 
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-supervisor.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-supervisor.js"; 
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-worker.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-worker.js"; 
 	grunt.initConfig( config );
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
