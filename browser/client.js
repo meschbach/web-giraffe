@@ -19,7 +19,7 @@ function Giraffe( config ){
 		return new Promise( function( fulfill, reject ){
 			var channel = new MessageChannel();
 
-			var workerScript = this.cfg.worker;
+			var workerScript = this.cfg.worker.script;
 			var worker = new Worker( workerScript );
 			worker.addEventListener( "error", function( problem ){
 				console.error( "Problem setting up work agent", problem );
