@@ -2,7 +2,7 @@
  * Copyright 2015 by Mark Eschbach.
  */
 
-require (__dirname + "/environment").isomorphic(function build_tests( ctx, sinon ){
+isomorphic(function build_tests( ctx, sinon ){
 
 describe( "Future", function(){
 	describe( "when created", function(){

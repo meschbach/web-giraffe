@@ -1,6 +1,6 @@
 "use strict";
 
-require (__dirname + "/environment").isomorphic(function build_tests( ctx, sinon ){
+isomorphic(function build_tests( ctx, sinon ){
 
 describe( "CommandDispatcher", function(){
 	describe( "when a message is received for a known handler", function(){

@@ -1,6 +1,4 @@
-module.exports.isomorphic = function( build_tests ) {
-
-if( module ){
+global.isomorphic = function( build_tests ) {
 	var sinon = require( "sinon" );
 	var sinonChai = require("sinon-chai");
 	var chai = require("chai");
@@ -10,9 +8,6 @@ if( module ){
 	chai.use(chaiAsPromised);
 	chai.should();
 
-	var mod = require( __dirname + "/../../target/node/isomorphic.js" );
+	var mod = require( __dirname + "/../target/node/isomorphic.js" );
 	build_tests( mod, sinon ); 
-}else{
-	build_tests( window, sinon );
-}
 };

@@ -18,6 +18,7 @@ module.exports = function(config) {
 			'node_modules/chai-as-promised/lib/chai-as-promised.js', /* TODO: Need to figure out how to correctly integrate this */
       'browser/**/*.js',
 			'tests/browser-unit/**/*.js',
+			'tests/isomorphic-browser-adapter.js',
 			'tests/isomorphic-unit/**/*.js'
     ],
 

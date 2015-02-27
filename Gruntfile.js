@@ -110,7 +110,8 @@ module.exports = function( grunt ){
 				options: {
           reporter: 'spec',
           quiet: false,
-          clearRequireCache: true
+          clearRequireCache: true,
+					require: [ "tests/isomorphic-node-adapter.js" ]
         },
         src: ['tests/isomorphic-unit/**/*.js']
 			}
