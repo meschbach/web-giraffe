@@ -1,6 +1,6 @@
 "use strict";
 
-isomorphic(function build_tests( ctx, sinon ){
+isomorphic(function build_tests( ctx, sinon, config ){
 
 describe( "CommandDispatcher", function(){
 	describe( "when a message is received for a known handler", function(){
@@ -89,23 +89,25 @@ describe( "CommandDispatcher", function(){
 		});
 	});
 
-	describe( "when linked with a message channel", function(){
-		it( "invokes the dispatcher for messages received", function(){
-			var name = "temptations";
-			var message = { command: name };
-			var channel = new MessageChannel();
+	if( config.hasMessageChannel ){
+		describe( "when linked with a message channel", function(){
+			it( "invokes the dispatcher for messages received", function(){
+				var name = "temptations";
+				var message = { command: name };
+				var channel = new MessageChannel();
 
-			var dispatcher = new ctx.CommandDispatcher();
-			dispatcher.linkChannel( channel.port1 );
-			var receiver = dispatcher.promiseMessage( name );
-			
-			channel.port2.postMessage( message );
+				var dispatcher = new ctx.CommandDispatcher();
+				dispatcher.linkChannel( channel.port1 );
+				var receiver = dispatcher.promiseMessage( name );
 
-			channel.port1.start();
-			channel.port2.start();
-			return receiver.should.eventually.become( message );
+				channel.port2.postMessage( message );
+
+				channel.port1.start();
+				channel.port2.start();
+				return receiver.should.eventually.become( message );
+			});
 		});
-	});
+	}
 });
 
 }
