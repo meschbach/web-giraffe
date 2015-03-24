@@ -8,7 +8,7 @@ describe( "CommandDispatcher", function(){
 			var context = {};
 			var handler = new CommandDispatcher();
 
-			handler.register( commandName, callback ); 
+			handler.register( commandName, callback );
 			handler.dispatch( exampleMessage, context );
 			callback.should.have.been.calledWith( exampleMessage, context );
 		});
@@ -21,8 +21,8 @@ describe( "CommandDispatcher", function(){
 			var exampleMessage = {command: commandName};
 			var handler = new CommandDispatcher();
 
-			handler.register( commandName, callback ); 
-			handler.register( "for the moment we are living", otherCommandHandler ); 
+			handler.register( commandName, callback );
+			handler.register( "for the moment we are living", otherCommandHandler );
 			handler.dispatch( exampleMessage );
 			otherCommandHandler.should.have.not.been.called;
 		});
@@ -30,7 +30,7 @@ describe( "CommandDispatcher", function(){
 
 	describe( "when a message is received for an unknown handler", function(){
 		it( "with no handlers dispatches to the default handler", function(){
-			var reciever = sinon.spy(); 
+			var reciever = sinon.spy();
 			var message = { command: 'a thousand whiskeys' };
 			var context = {};
 			var handler = new CommandDispatcher();
@@ -40,12 +40,12 @@ describe( "CommandDispatcher", function(){
 		});
 
 		it( "with handlers dispatches to the default handler", function(){
-			var reciever = sinon.spy(); 
+			var reciever = sinon.spy();
 			var message = { command: 'my low stat' };
 			var context = {};
 			var handler = new CommandDispatcher();
 			handler.defaultHandler = reciever;
-			handler.register( "strength score", function(){} ); 
+			handler.register( "strength score", function(){} );
 			handler.dispatch( message, context );
 			reciever.should.have.been.calledWith( message, context );
 		});
@@ -58,7 +58,7 @@ describe( "CommandDispatcher", function(){
 			var receiver = sinon.spy();
 			var handler = new CommandDispatcher();
 			handler.once(name, receiver );
-			var message = { command: name }; 
+			var message = { command: name };
 			handler.dispatch( message, context );
 			receiver.should.have.been.calledWith( message, context );
 		});
@@ -68,7 +68,7 @@ describe( "CommandDispatcher", function(){
 			var receiver = sinon.spy();
 			var handler = new CommandDispatcher();
 			handler.once( name, receiver );
-			var message = { command: name }; 
+			var message = { command: name };
 			handler.dispatch( message );
 			handler.dispatch( message );
 			receiver.should.have.been.calledOnce;

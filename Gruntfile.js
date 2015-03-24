@@ -21,7 +21,7 @@ module.exports = function( grunt ){
 	]);
 
 	/*
-	 * Supervisor specific sources 
+	 * Supervisor specific sources
 	 */
 	var supervisorSource = coreSource.concat([
 		'browser/aging-lifo-queue.js',
@@ -35,7 +35,7 @@ module.exports = function( grunt ){
 	]);
 
 	/*
-	 * Worker process sources 
+	 * Worker process sources
 	 */
 	var workerSource = coreSource.concat([
 		'browser/work-protocol.js',
@@ -87,14 +87,14 @@ module.exports = function( grunt ){
 				options: {
 				},
 				src: [ "env/isomorphic/**/*.js" ],
-				dest: generatedOutput + "node/isomorphic.js" 
+				dest: generatedOutput + "node/isomorphic.js"
 			}
 		},
 		karma: {
 			frontend: {
 				configFile: 'karma.conf.js',
 				singleRun: true,
-				background: false 
+				background: false
 			}
 		},
 		mochaTest: {
@@ -141,9 +141,9 @@ module.exports = function( grunt ){
 	}).join(';\n');
 
 	// Uglified browser release artifacts
-	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe.min.js" ] =  generatedBrowserOutput+ "/web-giraffe.js"; 
-	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-supervisor.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-supervisor.js"; 
-	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-worker.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-worker.js"; 
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe.min.js" ] =  generatedBrowserOutput+ "/web-giraffe.js";
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-supervisor.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-supervisor.js";
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-worker.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-worker.js";
 	grunt.initConfig( config );
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
