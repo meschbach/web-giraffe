@@ -1,5 +1,6 @@
 module.exports = function( grunt ){
-	var generatedOutput = process.env["DIST"] || "target/browser/";
+	var generatedOutput = process.env["DIST"] || "target/";
+	var generatedBrowserOutput = generatedOutput + "browser/";
 
 	/*
 	 * Source files used by all workers within the system
@@ -20,7 +21,7 @@ module.exports = function( grunt ){
 	]);
 
 	/*
-	 * Supervisor specific sources 
+	 * Supervisor specific sources
 	 */
 	var supervisorSource = coreSource.concat([
 		'browser/aging-lifo-queue.js',
@@ -34,7 +35,7 @@ module.exports = function( grunt ){
 	]);
 
 	/*
-	 * Worker process sources 
+	 * Worker process sources
 	 */
 	var workerSource = coreSource.concat([
 		'browser/work-protocol.js',
@@ -46,18 +47,18 @@ module.exports = function( grunt ){
 		concat: {
 			"browser-client" : {
 				src: clientSource,
-				dest: generatedOutput + "web-giraffe.js"
+				dest: generatedBrowserOutput + "web-giraffe.js"
 			},
 			"browser-supervisor" : {
 				src: supervisorSource,
-				dest: generatedOutput + "web-giraffe-supervisor.js",
+				dest: generatedBrowserOutput + "web-giraffe-supervisor.js",
 				options: {
 					footer: ";giraffe_supervisor();"
 				}
 			},
 			"browser-worker" : {
 				src: workerSource,
-				dest: generatedOutput + "web-giraffe-worker.js"
+				dest: generatedBrowserOutput + "web-giraffe-worker.js"
 			},
 			"test-worker" : {
 				src: "browser/test-worker.js",
@@ -81,13 +82,38 @@ module.exports = function( grunt ){
 			"example-libs" : {
 				src: "bower_components/jquery/dist/jquery.js",
 				dest: "examples/lib/jquery.js"
+			},
+			"isomorphic" : {
+				options: {
+				},
+				src: [ "env/isomorphic/**/*.js" ],
+				dest: generatedOutput + "node/isomorphic.js"
 			}
 		},
 		karma: {
 			frontend: {
 				configFile: 'karma.conf.js',
 				singleRun: true,
-				background: false 
+				background: false
+			}
+		},
+		mochaTest: {
+			test: {
+				options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: true
+        },
+        src: ['tests/node-system/**/*.js']
+			},
+			isomorphicTest: {
+				options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: true,
+					require: [ "tests/isomorphic-node-adapter.js" ]
+        },
+        src: ['tests/isomorphic-unit/**/*.js']
 			}
 		},
 		uglify: {
@@ -100,17 +126,30 @@ module.exports = function( grunt ){
 			browser: {
 				files: ['browser/**/*.js'],
 				tasks: ["build-browser-artifacts", "build-examples"]
+			},
+			node:{
+				files: ['env/node/**/*.js', 'tests/node-system/**/*.js'],
+				tasks: ["mochaTest"]
 			}
 		}
 	};
-	config.uglify.browser.files[generatedOutput + "/web-giraffe.min.js" ] =  generatedOutput+ "/web-giraffe.js"; 
-	config.uglify.browser.files[generatedOutput + "/web-giraffe-supervisor.min.js" ] =  generatedOutput+ "/web-giraffe-supervisor.js"; 
-	config.uglify.browser.files[generatedOutput + "/web-giraffe-worker.min.js" ] =  generatedOutput+ "/web-giraffe-worker.js"; 
+
+	//Isometric artifacts
+	config.concat.isomorphic.options.banner = 'var Promise = require("es6-promise").Promise;\n\n';
+	config.concat.isomorphic.options.footer = ['CommandDispatcher', 'Future'].map(function ( name ) {
+		return 'module.exports.' + name + ' = ' + name;
+	}).join(';\n');
+
+	// Uglified browser release artifacts
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe.min.js" ] =  generatedBrowserOutput+ "/web-giraffe.js";
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-supervisor.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-supervisor.js";
+	config.uglify.browser.files[generatedBrowserOutput + "/web-giraffe-worker.min.js" ] =  generatedBrowserOutput+ "/web-giraffe-worker.js";
 	grunt.initConfig( config );
 
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-mocha-test");
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
 	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker", "uglify"] );

@@ -47,7 +47,7 @@ describe( "FIFO Work Manager", function(){
 			});
 			describe( "when work is received prior to the timeout", function(){
 				it( "assings the work", function(){
-					//TODO: Redundant test with data push examples? 
+					//TODO: Redundant test with data push examples?
 					var example = [ 47 ];
 					var mockWorker = { assign: sinon.spy() };
 					var pool = fifo_work_pool();

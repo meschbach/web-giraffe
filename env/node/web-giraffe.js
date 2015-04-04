@@ -13,13 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Serves static example files
+ * NodeJS Primary Giraffe Environment
  */
-var express = require("express");
-var port = process.env['PORT'] || 9998;
 
-var app = express();
-app.use( express.static( __dirname + "/examples" ) );
-app.listen( port, function(){
-	console.log( "Running on port ", port );
-});
+var q = require("q");
+var child_process = require("child_process");
+
+function WebGiraffe( cfg ) {
+	this.cfg = cfg;
+	this.started = false;
+}
+
+WebGiraffe.prototype.start = function( ) {
+	if( this.started ){ return ; }
+	this.started = true;
+	this.supervisor = child_process.fork(__dirname + "/supervisor.js");
+}
+
+WebGiraffe.prototype.feed = function( input ) {
+	this.start();
+	//Dispatch supervisor
+	//return a promise of work
+	return q( this.cfg );
+};
+
+exports.init = function( cfg ) {
+	return new WebGiraffe( cfg );
+};
