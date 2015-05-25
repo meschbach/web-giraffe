@@ -23,3 +23,10 @@ Run system tests via karma:
 
 As a rule of them any changes should really have tests (either system for new features and/or units for other changes).
 
+### NodeJS/IOJS Testing
+
+Currently the system is in a state of flux while adding the service side processing.
+
+```shell
+grunt test
+```

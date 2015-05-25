@@ -149,9 +149,11 @@ module.exports = function( grunt ){
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-karma");
 	grunt.loadNpmTasks("grunt-mocha-test");
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
 	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker", "uglify"] );
+	grunt.registerTask( "test", ["karma:frontend", "mochaTest:isomorphicTest"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }
