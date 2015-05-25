@@ -95,6 +95,11 @@ module.exports = function( grunt ){
 				configFile: 'karma.conf.js',
 				singleRun: true,
 				background: false
+			},
+			system: {
+				configFile: 'karma-system.conf.js',
+				singleRun: true,
+				background: false
 			}
 		},
 		mochaTest: {
@@ -154,6 +159,9 @@ module.exports = function( grunt ){
 
 	grunt.registerTask( "build-examples", [ "concat:example-client", "concat:example-supervisor", "concat:example-worker", "concat:example-libs" ]);
 	grunt.registerTask( "build-browser-artifacts", ["concat:browser-client", "concat:browser-supervisor", "concat:browser-worker", "concat:test-worker", "uglify"] );
-	grunt.registerTask( "test", ["karma:frontend", "mochaTest:isomorphicTest"] );
+
+	grunt.registerTask( "unit-tests", ["karma:frontend", "mochaTest:isomorphicTest"] );
+	grunt.registerTask( "system-tests", ["karma:system"] );
+	grunt.registerTask( "test", ["unit-tests", "system-tests"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }
