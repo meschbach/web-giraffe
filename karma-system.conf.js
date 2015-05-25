@@ -43,7 +43,7 @@ module.exports = function(config) {
     // web server port
     port: 9877,
 		runnerPort: 9101,
-		proxies: { '/' : "http://localhost:9878" }, 
+		proxies: { '/' : "http://localhost:9878" },
 		urlRoot: '/karma',
 
 
