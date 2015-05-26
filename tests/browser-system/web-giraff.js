@@ -10,8 +10,8 @@ describe( "WebGiraff", function(){
 			var data = [0, 1, 2, 3, 4, 5, 6];
 
 			var giraffe = web_giraffe({
-				supervisor: "/web-giraffe-supervisor.js",
-				worker: "/test-worker.js"
+				supervisor: "/assets/web-giraffe-supervisor.js",
+				worker: "/assets/test-worker.js"
 			});
 			var result = giraffe.feed( data );
 			return result.should.eventually.become(data);
@@ -21,8 +21,8 @@ describe( "WebGiraff", function(){
 			var data = [0, 1, 2, 3, 4, 5, 6];
 
 			var giraffe = web_giraffe({
-				supervisor: "/web-giraffe-supervisor.js",
-				worker: "/test-worker.js",
+				supervisor: "/assets/web-giraffe-supervisor.js",
+				worker: "/assets/test-worker.js",
 				map: "sum_before"
 			});
 			var result = giraffe.feed( data );

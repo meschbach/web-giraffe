@@ -19,5 +19,5 @@ function init( config ){
 	workConfig = config;
 }
 
-importScripts( "/web-giraffe-worker.js" );
+importScripts( "/assets/web-giraffe-worker.js" );
 giraffe_worker_agent();

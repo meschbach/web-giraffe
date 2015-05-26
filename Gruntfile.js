@@ -162,6 +162,6 @@ module.exports = function( grunt ){
 
 	grunt.registerTask( "unit-tests", ["karma:frontend", "mochaTest:isomorphicTest"] );
 	grunt.registerTask( "system-tests", ["karma:system"] );
-	grunt.registerTask( "test", ["unit-tests", "system-tests"] );
+	grunt.registerTask( "test", ["unit-tests", "build-browser-artifacts", "system-tests"] );
 	grunt.registerTask("default", ["build-browser-artifacts"]);
 }
