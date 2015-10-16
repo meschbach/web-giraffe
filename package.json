@@ -1,6 +1,7 @@
 {
 	"version": "0.2.4",
 	"name": "web-giraffe",
+	"repository" : "https://github.com/meschbach/web-giraffe.git",
 	"dependencies": {
 		"es6-promise" : "3.0.2"
 	},
