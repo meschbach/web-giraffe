@@ -1,8 +1,10 @@
 function Giraffe( config ){
-	this.cfg = config || {};
-	this.cfg.worker = this.cfg.worker || {};
-	this.cfg.worker.script = this.cfg.worker.script || "web-giraffe-worker.js";
+	this.cfg = { worker: { }, supervisor: {} };
+	this.cfg.worker = ( config.worker && config.worker.script ) || {};
+	this.cfg.worker.script = ( config.worker.script || config.worker || "web-giraffe-worker.js" );
 	this.cfg.worker.maximum = navigator.hardwareConcurrency || 6;
+
+	this.cfg.supervisor.script = config.supervisor.script || config.supervisor;
 
 	this.pendingPromises = [];
 	this.dispatcher = new CommandDispatcher();
@@ -35,7 +37,7 @@ function Giraffe( config ){
 Giraffe.prototype.start = function(){
 	if( this.supervisor ) { return; }
 
-	var supervisorScript = this.cfg.supervisor || "web-giraffe-supervisor.js";
+	var supervisorScript = this.cfg.supervisor.script || "web-giraffe-supervisor.js";
 	this.supervisor = new Worker( supervisorScript );
 	this.dispatcher.linkPort( this.supervisor, true );
 
@@ -50,7 +52,7 @@ Giraffe.prototype.start = function(){
 
 	this.supervisor.addEventListener('error', function(problem){
 		console.warn( "[supervisor] Encountered error: ", problem );
-		var message = problem.message ? problem.message : "(unkonwn supervisor error)"; 
+		var message = problem.message ? problem.message : "(unkonwn supervisor error)";
 		var err = new Error( message );
 		this.pendingPromises.forEach( function( promiseHandler ){
 			promiseHandler({ succes:false, failure: err });
