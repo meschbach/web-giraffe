@@ -1,5 +1,5 @@
 /**
- * Work Agent communciation handler 
+ * Work Agent communciation handler
  */
 function WorkAgentClient( id, cfg ){
 	this.id = id;
@@ -39,7 +39,7 @@ WorkAgentClient.prototype.terminate = function( ){
 }
 
 /**
- * Giraffe Supervisor 
+ * Giraffe Supervisor
  */
 function giraffe_supervisor(){
 	var commandDispatcher = new CommandDispatcher();
@@ -65,7 +65,7 @@ function giraffe_supervisor(){
 		var shardPromises = workSharding.shard( batchData );
 		shardPromises.forEach( function( promise ) {
 			promise.then( function( result ){
-				progress(result); 
+				progress(result);
 			});
 		});
 		return Promise.all( shardPromises ).then( function( output ){
@@ -77,7 +77,7 @@ function giraffe_supervisor(){
 		});
 	});
 
-	//TODO: Worker spawning should really be moved out 
+	//TODO: Worker spawning should really be moved out
 	workerFactory = {
 		newWorker: function(){
 			spawn_worker();

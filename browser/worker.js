@@ -39,7 +39,7 @@ function giraffe_worker_agent( worker, control_channel ){
 
 	dispatcher.register( "giraffe:browser-worker-init", function( message, env ){
 		id = message.id;
-		port = env.ports[0]; 
+		port = env.ports[0];
 		work_agent( id, port, false );
 	});
 
