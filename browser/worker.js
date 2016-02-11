@@ -31,6 +31,9 @@ function giraffe_worker_agent( worker, control_channel ){
 		agent_control.repliesTo( workProtocol.operation, function( command ){
 			return Promise.resolve( worker.perform_work_on( command.on ) );
 		});
+		agent_control.register( workProtocol.terminate, function( command ){
+			worker.close();
+		});
 		agent_control.linkPort( supervisor_channel, hasStarted );
 	}
 

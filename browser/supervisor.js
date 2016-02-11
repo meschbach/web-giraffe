@@ -20,16 +20,22 @@ WorkAgentClient.prototype.openedChannel = function( channel, hasStarted  ){
 }
 WorkAgentClient.prototype.dial = function(){
 	if( !this.channel ){ throw new Error("no channel established to dial on"); }
-	this.channel.postMessage({command: "girafe:work-agent:initialize", id: this.id, config: this.cfg });
+	this.channel.postMessage({command: workProtocol.initialize, id: this.id, config: this.cfg });
 	return self;
 }
 WorkAgentClient.prototype.assign_work = function( data ){
 	return this.dispatcher.withReplyTo({ command: workProtocol.operation, on: data });
 }
 WorkAgentClient.prototype.assign = function( request ){
-	return this.assign_work( request.data ).then( function( resultMessage ){
+	var completion = this.assign_work( request.data ).then( function( resultMessage ){
 		request.completion.resolve( resultMessage );
 	});
+	completion.then( function(){ this.idle(); }.bind(this) );
+	return completion;
+}
+
+WorkAgentClient.prototype.terminate = function( ){
+	this.channel.postMessage({command: workProtocol.terminate, id: this.id, config: this.cfg });
 }
 
 /**
