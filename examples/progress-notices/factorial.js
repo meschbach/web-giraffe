@@ -1,5 +1,5 @@
 function factorial( n ){
-	if( n < 1 ){ return 1; } 
+	if( n < 1 ){ return 1; }
 	if( n == 1 ){ return 1; }
 	return factorial( n - 1 ) * n;
 }
@@ -16,4 +16,4 @@ function perform_work_on( set ){
  * this worker.
  */
 importScripts("/lib/web-giraffe-worker.js");
-giraffe_worker_agent(); 
+giraffe_worker_agent();

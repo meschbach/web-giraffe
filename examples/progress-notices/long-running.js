@@ -17,4 +17,4 @@ function perform_work_on( set ){
  * this worker.
  */
 importScripts("/lib/web-giraffe-worker.js");
-giraffe_worker_agent(); 
+giraffe_worker_agent();
