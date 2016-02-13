@@ -2,12 +2,12 @@
 	<head>
 		<title>Getting Started - Web Giraffe</title>
 		<script src='/lib/jquery.js'> </script>
-		<script src='/lib/web-giraffe.js'> </script> 
+		<script src='/lib/web-giraffe.js'> </script>
 		<script type='application/javascript'>
 var giraffe = web_giraffe({
-	/* Default for these resources is relative to this page. */ 
-	supervisor: '/lib/web-giraffe-supervisor.js', 
-	worker: 'factorial.js'
+	/* Default for these resources is relative to this page. */
+	supervisor: '/lib/web-giraffe-supervisor.js',
+	worker: '/getting-started/factorial.js'
 });
 
 var out = "#output";

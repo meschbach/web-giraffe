@@ -108,7 +108,7 @@ function giraffe_supervisor(){
 	}
 
 	function spawn_internal_worker( id, agent ){
-		var worker = new Worker( supervisorConfig.worker );
+		var worker = new Worker( supervisorConfig.worker.script );
 		worker.postMessage({ command: 'giraffe:web-worker-init', id: id });
 		agent.openedChannel( worker, true );
 	}
