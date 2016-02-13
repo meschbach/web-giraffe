@@ -3,6 +3,7 @@ function Giraffe( config ){
 	this.cfg.worker = ( config.worker && config.worker.script ) || {};
 	this.cfg.worker.script = ( config.worker.script || config.worker || "web-giraffe-worker.js" );
 	this.cfg.worker.maximum = navigator.hardwareConcurrency || 6;
+	this.cfg.map = config.map;
 
 	this.cfg.supervisor.script = config.supervisor.script || config.supervisor;
 
