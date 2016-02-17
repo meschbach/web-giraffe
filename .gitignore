@@ -1,0 +1,6 @@
+node_modules
+target
+*.swp
+*.swo
+examples/lib
+bower_components
